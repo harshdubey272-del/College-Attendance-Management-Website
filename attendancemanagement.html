@@ -1,0 +1,144 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>College Attendance System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef2ff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            border-radius: 10px;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        th {
+            background: #4f46e5;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>College Attendance System</h2>
+
+    <input id="roll" placeholder="Roll Number">
+    <input id="name" placeholder="Student Name">
+    <button onclick="addStudent()">Add Student</button>
+
+    <h3 id="summary">Present: 0 | Absent: 0</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Roll No.</th>
+                <th>Name</th>
+                <th>Attendance</th>
+            </tr>
+        </thead>
+        <tbody id="list"></tbody>
+    </table>
+</div>
+
+<script>
+    let students = JSON.parse(
+        localStorage.getItem("students") || "[]"
+    );
+
+    function showStudents() {
+        list.innerHTML = "";
+
+        let present = 0, absent = 0;
+
+        students.forEach((s, i) => {
+            if (s.status === "Present") present++;
+            if (s.status === "Absent") absent++;
+
+            list.innerHTML += `
+                <tr>
+                    <td>${s.roll}</td>
+                    <td>${s.name}</td>
+                    <td>
+                        <button onclick="mark(${i}, 'Present')">
+                            Present
+                        </button>
+                        <button onclick="mark(${i}, 'Absent')">
+                            Absent
+                        </button>
+                        ${s.status}
+                    </td>
+                </tr>`;
+        });
+
+        summary.innerText =
+            `Present: ${present} | Absent: ${absent}`;
+
+        localStorage.setItem("students", JSON.stringify(students));
+    }
+
+    function addStudent() {
+        let rollNo = document.getElementById("roll").value.trim();
+        let studentName = document.getElementById("name").value.trim();
+
+        if (!rollNo || !studentName) {
+            alert("Please enter roll number and name!");
+            return;
+        }
+
+        students.push({
+            roll: rollNo,
+            name: studentName,
+            status: "Not Marked"
+        });
+
+        document.getElementById("roll").value = "";
+        document.getElementById("name").value = "";
+
+        showStudents();
+    }
+
+    function mark(index, status) {
+        students[index].status = status;
+        showStudents();
+    }
+
+    showStudents();
+</script>
+
+</body>
+</html>
+```
